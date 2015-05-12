@@ -1,0 +1,30 @@
+
+
+void fontHelper(byte pos, byte a, byte b, byte c, byte d, byte e, byte f)
+{
+    lcd.setCursor(pos*4, 0);  // 
+    lcd.write(a);
+    lcd.write(b);
+    lcd.write(c);
+    lcd.setCursor(pos*4, 1);
+    lcd.write(d);
+    lcd.write(e);
+    lcd.write(f);
+}
+
+void custom(byte pos, byte digit)
+{
+  switch (digit)
+  {
+    case 0: fontHelper(pos, 0,1,2,3,4,5); break;
+    case 1: fontHelper(pos, 1,2,32,4,255,4); break;
+    case 2: fontHelper(pos, 6,6,2,3,7,7); break;
+    case 3: fontHelper(pos, 6,6,2,7,7,5); break;
+    case 4: fontHelper(pos, 3,4,2,32,32,255); break;
+    case 5: fontHelper(pos, 255,6,6,7,7,5); break;
+    case 6: fontHelper(pos, 0,6,6,3,7,5); break;
+    case 7: fontHelper(pos, 1,1,2,32,0,32); break;
+    case 8: fontHelper(pos, 0,6,2,3,7,5); break;
+    case 9: fontHelper(pos, 0,6,2,32,32,255); break;
+    }
+}
