@@ -1,0 +1,125 @@
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
+#include <Wire.h>
+ #define button 2
+#define REDLITE 3
+#define GREENLITE 5
+#define BLUELITE 6
+//set the current time here
+int s=00;
+int h=12;
+int m=47;
+// you can change the overall brightness by range 0 -> 255
+int brightness = 255;
+// the 8 arrays that form each segment of the custom numbers
+byte A[8] = {B00111,B01111,B11111,B11111,B11111,B11111,B11111,B11111};
+byte B[8] = {B11111,B11111,B11111,B00000,B00000,B00000,B00000,B00000};
+byte C[8] = {B11100,B11110,B11111,B11111,B11111,B11111,B11111,B11111};
+byte D[8] = {B11111,B11111,B11111,B11111,B11111,B11111,B01111,B00111};
+byte E[8] = {B00000,B00000,B00000,B00000,B00000,B11111,B11111,B11111};
+byte F[8] = {B11111,B11111,B11111,B11111,B11111,B11111,B11110,B11100}; 
+byte G[8] = {B11111,B11111,B11111,B00000,B00000,B00000,B11111,B11111};
+byte H[8] = {B11111,B00000,B00000,B00000,B00000,B11111,B11111,B11111};
+
+//Font Setup=============================================================
+//=======================================================================
+void fontHelper();
+//=====================================================================
+//====================================================================
+void setup(){//Code in this section runs only one time.
+
+  pinMode (button, INPUT);
+  digitalWrite(button, HIGH);
+  pinMode(REDLITE, OUTPUT);
+  pinMode(GREENLITE, OUTPUT);
+  pinMode(BLUELITE, OUTPUT);
+  Serial.begin(9600);/*Sets up a Serial Window with a 
+  data rate of 9600 Baud.
+  */
+   // assigns each segment a write number
+  lcd.createChar(0,A);
+  lcd.createChar(1,B);
+  lcd.createChar(2,C);
+  lcd.createChar(3,D);
+  lcd.createChar(4,E);
+  lcd.createChar(5,F);
+  lcd.createChar(6,G);
+  lcd.createChar(7,H);
+  brightness = 100;
+  
+
+}
+
+void loop(){
+
+ for (int i = 0; i < 255; i++) {
+    setBacklight(i, 0, 255-i);
+    
+  }
+  for (int i = 0; i < 255; i++) {
+    setBacklight(255-i, i, 0);
+   
+  }
+  for (int i = 0; i < 255; i++) {
+    setBacklight(0, 255-i, i);
+    
+  }
+}
+ 
+ 
+ 
+void setBacklight(uint8_t r, uint8_t g, uint8_t b) {
+  // normalize the red LED - its brighter than the rest!
+  r = map(r, 0, 255, 0, 100);
+  g = map(g, 0, 255, 0, 150);
+ 
+  r = map(r, 0, 255, 0, brightness);
+  g = map(g, 0, 255, 0, brightness);
+  b = map(b, 0, 255, 0, brightness);
+ 
+  // common anode so invert!
+  r = map(r, 0, 255, 255, 0);
+  g = map(g, 0, 255, 255, 0);
+  b = map(b, 0, 255, 255, 0);
+  Serial.print("R = "); Serial.print(r, DEC);
+  Serial.print(" G = "); Serial.print(g, DEC);
+  Serial.print(" B = "); Serial.println(b, DEC);
+  analogWrite(REDLITE, r);
+  analogWrite(GREENLITE, g);
+  analogWrite(BLUELITE, b);
+   lcd.setCursor(3,0);
+ 
+ int buttonState = digitalRead(button);
+ if (buttonState == LOW){
+  m++;
+  
+ }
+ 
+
+ 
+    while(millis()%1000 != 0);/*
+    While the millisecond timer is between 0 and 1000,
+    the seconds integer increases by 1
+    */
+  s +=1;
+  if(s==60){ s=0; m +=1;}//When "s" reaches 60, reset to zero and add 1 to "m"
+  if(m==60){ m=0; h +=1;}//When "m" reaches 60, reset to zero and add 1 to "h"
+  if(h==24){h=1;}//When "h" reaches 24, reset to 1
+  byte hour1 = h/10;
+ byte hour2 = h%10;
+byte min1 = m/10;
+byte min2 = m%10;
+ 
+ 
+lcd.clear();
+     lcd.begin(16, 2);
+  lcd.setCursor(7,0);
+  lcd.print ("*");
+    lcd.setCursor(7,1);
+  lcd.print ("*");
+custom(0, hour1);
+custom(1, hour2);
+custom(2, min1);
+custom(3, min2);
+ 
+}
